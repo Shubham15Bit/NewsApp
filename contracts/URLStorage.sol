@@ -3,36 +3,24 @@ pragma solidity ^0.8.0;
 
 contract URLStorage {
     address private owner;
-
-    mapping(address => string) private urls;
+    mapping(uint256 => string) public urls;
+    uint256 public urlId;
 
     constructor() {
         owner = msg.sender;
+        urlId = 1;
     }
 
-    modifier OnlyOwner() {
+    modifier onlyOwner() {
         require(
             msg.sender == owner,
-            "Only the contract owner can perform this action"
+            "Only the contract owner can call this function"
         );
         _;
     }
 
-    function setURL(address _address, string memory _url) public OnlyOwner {
-        urls[_address] = _url;
-    }
-
-    function getURL() public view returns (string memory) {
-        return urls[msg.sender];
-    }
-
-    function getUrlByaddress(
-        address _address
-    ) public view returns (string memory) {
-        return urls[_address];
-    }
-
-    function deleteURL(address _address) public OnlyOwner{
-        delete urls[_address];
+    function setURL(string memory _url) public onlyOwner {
+        urls[urlId] = _url;
+        urlId = urlId + 1;
     }
 }

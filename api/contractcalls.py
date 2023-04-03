@@ -27,12 +27,11 @@ w3.middleware_onion.inject(geth_poa_middleware, layer=0)
 
 
 
-def set_url(account,url):
+def set_url(url):
     print("calling contract")
     my_contract = w3.eth.contract(address=contract_address, abi=abi)
     nonce = w3.eth.get_transaction_count(public_key)
-    url_tx = my_contract.functions.setURL(account,
-        url).build_transaction(
+    url_tx = my_contract.functions.setURL(url).build_transaction(
         {
             "from": public_key,
             "nonce": nonce,
@@ -44,36 +43,5 @@ def set_url(account,url):
     )
     tx_data = w3.eth.send_raw_transaction(signed_transaction.rawTransaction)
     receipt = w3.eth.wait_for_transaction_receipt(tx_data)
-    url_data = my_contract.functions.getUrlByaddress(account).call()
-    return url_data
-
-
-def get_url(account):
-    print("calling contract")
-    my_contract = w3.eth.contract(address=contract_address, abi=abi)
-    url_tx = my_contract.functions.getURL().call()
-    return url_tx
-
-def get_url_by_address(account):
-    print("calling contract")
-    my_contract = w3.eth.contract(address=contract_address, abi=abi)
-    url = my_contract.functions.getUrlByaddress(account).call()
-    return url
-
-def delete_url(account):
-    print("calling contract")
-    my_contract = w3.eth.contract(address=contract_address, abi=abi)
-    nonce = w3.eth.get_transaction_count(public_key)
-    tx_hash = my_contract.functions.deleteURL(account).build_transaction(
-        {
-            "from": public_key,
-            "nonce": nonce,
-            "gasPrice": w3.eth.gas_price,
-        }
-    )
-    signed_transaction = w3.eth.account.sign_transaction(
-        tx_hash, private_key=private_key
-    )
-    tx_data = w3.eth.send_raw_transaction(signed_transaction.rawTransaction)
-    receipt = w3.eth.wait_for_transaction_receipt(tx_data)
-    return receipt
+    url_id = my_contract.functions.urlId().call()
+    return url_id
